@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class GroupUser extends Pivot//Model
 {
-    //
+    protected $table = "group_users";
 }

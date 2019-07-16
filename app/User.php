@@ -5,10 +5,11 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -36,4 +37,26 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Scope a query to only return users not admin.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOnlyUsers($query)
+    {
+        return $query->where('user_type', "user");
+    }
+
+    /**
+     * Returns Groups Relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_users')
+                        ->withPivot('membership_status');
+    }
 }

@@ -17,7 +17,7 @@ class CreateGroupUsersTable extends Migration
             $table->bigIncrements('id');
             $table->integer('group_id');
             $table->integer('user_id');
-            $table->enum('membership_status', ['pending', 'active', 'revoked']);
+            $table->enum('membership_status', ['pending', 'active', 'revoked'])->default('pending');
             $table->timestamps();
         });
     }
