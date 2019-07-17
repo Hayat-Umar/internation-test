@@ -30,9 +30,11 @@ class GroupMembershipController extends Controller
 
         if(!empty($membership))
         {
-            if($membership->membership_status == "revoked")
+            if($membership->pivot->membership_status == "revoked")
             {
-                return $group->users()->attach([$request->user_id => ['membership_status' => "pending"]]);
+                $membership->pivot->membership_status = "pending";
+                $membership->pivot->save();
+                return;
             }
 
             return abort(409, "User is already member of this group.");
@@ -52,7 +54,7 @@ class GroupMembershipController extends Controller
     {
         $request->validate([
             'user_id'           => 'required|exists:users,id',
-            'membership_status' => 'in:active,revoked',
+            'membership_status' => 'required|in:active,revoked'
         ]);
 
         $user           = User::find($request->user_id);
@@ -64,10 +66,10 @@ class GroupMembershipController extends Controller
 
         if(!empty($membership))
         {
-            return $group->users()->attach([$request->user_id => ['membership_status' => $request->membership_status]]);
+            $membership->pivot->membership_status = $request->membership_status;
+            $membership->pivot->save();
 
-            // $membership->membership_status = $request->membership_status;
-            // return $membership->save();
+            return;
         }
 
         return abort(404, "User is not member of this group.");

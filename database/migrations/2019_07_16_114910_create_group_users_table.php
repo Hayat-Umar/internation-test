@@ -15,10 +15,12 @@ class CreateGroupUsersTable extends Migration
     {
         Schema::create('group_users', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('group_id');
-            $table->integer('user_id');
+            $table->unsignedBigInteger('group_id');
+            $table->unsignedBigInteger('user_id');
             $table->enum('membership_status', ['pending', 'active', 'revoked'])->default('pending');
             $table->timestamps();
+            $table->foreign('group_id')->references('id')->on('groups');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
